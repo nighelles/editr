@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+$def with (posts,username,loggedin)
 
-</body>
-</html>
+<link rel="stylesheet" type="text/css" href="/static/css/userpage.css" />
+
+<div class="post">
+    <a href="/edit/post/new">New Post</a>
+</div>
+
+$for post in posts:
+    <div class="post">
+        <span>$post.title</span><br><br>
+        <span>$:post.text</span><br><br>
+        <span>$username</span><br><span>$post.date</span>
+        $if loggedin:
+            <a href="/edit/post/$post.id">Edit</a>
+    </div>

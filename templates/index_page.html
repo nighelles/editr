@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+$def with (posts,username,loggedin)
 
-</body>
-</html>
+<link rel="stylesheet" type="text/css" href="/static/css/userpage.css" />
+
+$if loggedin:
+    <a href="/user/$username">My editr.</a>
+
+<h1>Here are the most recent posts. See any you like?</h1>
+
+$for post in posts:
+    <div class="post">
+        <span>$post.title</span><br><br>
+        <span>$:post.text</span><br><br>
+        <span>$post.author</span><br><span>$post.date</span>
+    </div>

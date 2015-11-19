@@ -1,10 +1,27 @@
-<!DOCTYPE html>
+$def with (body,logged_in=False)
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>editr.</title>
+
+    <link rel="stylesheet" type="text/css" href="/static/css/common.css">
 </head>
 <body>
+
+<div id="header">
+    <span id="logo"><a href="/"><img src="/static/logo.jpg"></a></span>
+    <span id="login">
+    $if logged_in==False:
+        <a href="/login/">Login</a>
+    $else:
+        <a href="/logout/">Logout</a>
+    </span>
+</div>
+
+<div id="body">
+    $:body
+</div>
 
 </body>
 </html>

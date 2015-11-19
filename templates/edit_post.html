@@ -1,10 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+$def with (pform,postnum)
 
-</body>
-</html>
+<style>
+    div#edit_post_form {
+        width: 100%;
+    }
+    textarea {
+        height: 300px;
+        width: 600px;
+    }
+
+</style>
+
+<div id="edit_post_form">
+    <form name="edit_post" method="post">
+    $:pform.render()
+    <input type="submit"/>
+    </form>
+    <form name="delete_post" action="/delete/post/$postnum" method="post">
+        <input type="submit" title="DELETE">
+    </form>
+</div>

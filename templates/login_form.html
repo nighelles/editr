@@ -1,3 +1,19 @@
-$def with (form)
+$def with (login,register)
 
-<form name="login"
+<div id="loginform">
+    <span>log in:</span><br>
+    <form name="login" method="post" action="/login/">
+    $if not login.valid:
+        <p class="error">Login Form Error</p>
+    $:login.render()
+    <input type="submit" />
+    </form>
+
+    <span>or create an account:</span><br>
+    <form name="register" method="post">
+    $if not register.valid:
+        <p class="error">Login Form Error</p>
+    $:register.render()
+    <input type="submit" />
+</form>
+</div>
