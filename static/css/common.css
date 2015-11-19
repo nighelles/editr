@@ -1,0 +1,34 @@
+#header {
+    border: 1px solid grey;
+    right: 1px;
+    left: 1px;
+    margin: 1px;
+    height: 50px;
+}
+
+#logo {
+    position: relative;
+    left: 5px;
+    top: 8px;
+}
+#login {
+    position: absolute;
+    right: 5px;
+}
+
+#loginform {
+    width: 300px;
+    margin-top: 20px;
+    border: 1px solid grey;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+}
+#body {
+    width: 100%;
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+}
