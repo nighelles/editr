@@ -9,8 +9,6 @@ def adapt_from_wordpress(url):
     text = r.content
     soup = BeautifulSoup(text,'lxml')
 
-    f = open("test.html",'w')
-
     header = soup.find_all("div",id="header")[0]
     author = header.div.h4.a.prettify()
 
