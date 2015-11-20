@@ -108,7 +108,8 @@ class user:
                           vars=locals())
 
         li = logged_in()
-        return render.site_header(render.user_page(posts, username, li), li)
+        a = list(posts)
+        return render.site_header(render.user_page(a,a, username, li), li)
 
 class delpost:
     def POST(self, postnum):

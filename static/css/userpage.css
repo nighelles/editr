@@ -1,4 +1,33 @@
+div.posts {
+	position:relative;
+	width: 50%;
+	float:left;
+}
+
 div.post {
-    margin: 5px;
-    border:1px solid grey;
+	right:0px;
+	left:0px;
+    	margin: 5px;
+    	border:1px solid grey;
+}
+
+div.ipost {
+	right:0px;
+	left:0px;
+    	margin: 5px;
+    	border:1px solid grey;
+	background-color:#EEEEEE;
+}
+
+div.included {
+	position:relative;
+	float: right;
+	width:50%;
+}
+
+div.included-header {
+	margin: 5px;
+	border: 1px solid grey;
+	right:0px;
+	left:0px;
 }

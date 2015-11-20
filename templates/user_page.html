@@ -1,11 +1,11 @@
-$def with (posts,username,loggedin)
+$def with (posts,included,username,loggedin)
 
 <link rel="stylesheet" type="text/css" href="/static/css/userpage.css" />
 
+<div class="posts">
 <div class="post">
     <a href="/edit/post/new">New Post</a>
 </div>
-
 $for post in posts:
     <div class="post">
         <span>$post.title</span><br><br>
@@ -14,3 +14,17 @@ $for post in posts:
         $if loggedin:
             <a href="/edit/post/$post.id">Edit</a>
     </div>
+</div>
+
+<div class="included">
+<div class="included-header">
+Included Posts
+</div>
+
+$for i in included:
+    <div class="ipost">
+        <span>$i.title</span><br><br>
+	<span>$:i.text</span><br><br>
+    </div>
+
+</div>
