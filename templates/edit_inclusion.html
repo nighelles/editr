@@ -1,0 +1,27 @@
+$def with (iform)
+
+<style>
+#addbutton {
+	height: 30px;
+	width: 50px;
+	background-color: grey;
+	cursor:pointer;
+	margin-left: 20px;
+}
+</style>
+
+<script type="text/javascript">
+	function savepost() {
+		document.edit_inclusion.submit();
+	}
+</script>
+
+<div class="greybordered">
+	<form name="edit_inclusion" method="POST">
+		$:iform.render()
+		<div id="addbutton" onclick="savepost();">
+			add
+		</div>
+	</form>
+	
+</div>
