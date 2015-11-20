@@ -5,13 +5,16 @@ import bcrypt
 
 import tempfile
 
+import wordpress_adapter
+
 urls = (
 '/', 'index',
 '/login/', 'login',
 '/logout/', 'logout',
 '/user/(.+)', 'user',
 '/edit/post/(.+)', 'editpost',
-'/delete/post/(.+)', 'delpost'
+'/delete/post/(.+)', 'delpost',
+'/edit/inclusion/(.+)', 'editinclusion'
 )
 
 render = web.template.render('templates/')
@@ -20,8 +23,10 @@ db = web.database(dbn='postgres', user='postgres', pw='', db='editr')
 
 postform = form.Form(
     form.Textbox("post_title", form.notnull, description="title"),
-    form.Textarea("post_body", form.notnull, description="text")
+    form.Textarea("post_body", form.notnull, description="text"),
+    form.Dropdown("post_layout", [(0,"Full Column"), (1,"Half Column")])
 )
+
 
 loginform = form.Form(
             form.Textbox("login_username",
@@ -41,6 +46,11 @@ registerform = form.Form(
             validators = [
                 form.Validator("Passwords did not match", lambda i: i.register_password==i.register_password2)
             ]
+)
+
+inclusionform = form.Form(
+    form.Textbox("wordpress_url",form.notnull,description="Wordpress URL"),
+    form.Dropdown("wordpress_inc_type",[(0, "Full Article"), (1, "Summary and Link")])
 )
 
 def generate_session_key(username):
@@ -85,6 +95,22 @@ def username_from_userid(userid):
     u = db.select('users',where="id=$userid",vars=locals()).first()
     return u.username
 
+def add_from_wordpress(username,uid,url):
+    i = db.select('inclusions',where="url=$url",vars=locals()).first()
+    if i==None:
+        res = wordpress_adapter.adapt_from_wordpress(url)
+        db.insert('inclusions',
+                  author=res['author'],
+                  title=res['title'],
+                  text=res['text'],
+                  url=url)
+        i = db.select('inclusions',where="url=$url",vars=locals()).first()
+
+    db.insert('posts',
+              author_id=uid,
+              inclusion_id=i.id
+    )
+        
 
 class index:
     def GET(self):
@@ -108,8 +134,23 @@ class user:
                           vars=locals())
 
         li = logged_in()
-        a = list(posts)
-        return render.site_header(render.user_page(a,a, username, li), li)
+
+        posts_to_render = []
+        for post in list(posts):
+            if post.inclusion_id == 0:
+                posts_to_render.append(post)
+            else:
+                o_post = db.select(
+                    'inclusions',
+                    where="id=$post.inclusion_id",
+                    vars=locals()).first()
+                o_post.layout_type=post.layout_type
+                o_post.inclusion_id=-1
+                o_post.id=post.id
+                o_post.edited=post.edited
+                posts_to_render.append(o_post)
+                
+        return render.site_header(render.user_page(posts_to_render,[], username, li), li)
 
 class delpost:
     def POST(self, postnum):
@@ -132,6 +173,7 @@ class editpost:
             post = db.select('posts', where="id=$postnum", vars=locals()).first()
             pform.post_title.value = post.title
             pform.post_body.value = post.text
+	    pform.post_layout.value = post.layout_type
 
         return render.site_header(render.edit_post(pform,postnum),logged_in())
 
@@ -153,6 +195,8 @@ class editpost:
                 db.update('posts',
                           title=pform.post_title.value,
                           text=pform.post_body.value,
+                          layout_type=pform.post_layout.value,
+                          edited=1,
                           where="id=$postnum AND author_id=$uid",
                           vars=locals())
 
@@ -161,8 +205,33 @@ class editpost:
         else:
             return render.site_header(render.edit_post(pform,postnum),logged_in())
 
+class editinclusion:
+    def GET(self, postnum):
+        iform = inclusionform()
 
+        if postnum != 'new':
+            return "Error"
 
+        return render.site_header(render.edit_inclusion(iform),logged_in())
+
+    def POST(self,postnum):
+        uname = logged_in_as()
+        if uname is None:
+            return "No Username"
+        uid = userid_from_username(uname)
+
+        iform = inclusionform()
+        if iform.validates():
+            if postnum=='new':
+                i=web.input()
+                if i['type']=="wordpress":
+                    add_from_wordpress(uname,uid,iform.wordpress_url.value)
+                    raise web.seeother('/user/'+uname)
+                else:
+                    return "Error"
+        else:
+            return render.site_header(render.edit_inclusion(iform),logged_in())
+        
 class logout:
     def GET(self):
         u = web.cookies().get('username')

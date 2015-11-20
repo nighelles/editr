@@ -1,33 +1,24 @@
 div.posts {
 	position:relative;
-	width: 50%;
+	width: 100%;
 	float:left;
 }
 
-div.post {
+div.post_internal {
+	margin:5px;
 	right:0px;
 	left:0px;
-    	margin: 5px;
     	border:1px solid grey;
 }
 
-div.ipost {
-	right:0px;
-	left:0px;
-    	margin: 5px;
-    	border:1px solid grey;
-	background-color:#EEEEEE;
-}
-
-div.included {
-	position:relative;
+div.post0 {
 	float: right;
-	width:50%;
+	width: 100%;
 }
 
-div.included-header {
-	margin: 5px;
-	border: 1px solid grey;
-	right:0px;
-	left:0px;
+div.post1 {
+	float: right;
+	width: 50%;
 }
+
+

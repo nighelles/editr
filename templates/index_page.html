@@ -8,8 +8,10 @@ $if loggedin:
 <h1>Here are the most recent posts.</h1>
 
 $for post in posts:
-    <div class="post">
+    <div class="post0">
+    <div class="post_internal">
         <span>$post.title</span><br><br>
         <span>$:post.text</span><br><br>
         <span>$post.author</span><br><span>$post.date</span>
+    </div>
     </div>

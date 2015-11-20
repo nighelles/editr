@@ -16,6 +16,13 @@
     right: 5px;
 }
 
+div.greybordered {
+	margin-top: 20px;
+	border: 1px solid grey;
+	margin-right: auto;
+	margin-left: auto;
+}
+
 #loginform {
     width: 300px;
     margin-top: 20px;
