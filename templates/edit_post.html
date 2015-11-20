@@ -1,22 +1,54 @@
 $def with (pform,postnum)
 
 <style>
-    div#edit_post_form {
+div#edit_post_form {
         width: 100%;
-    }
-    textarea {
+}
+textarea {
         height: 300px;
         width: 600px;
-    }
+}
+
+#savebutton {
+	height: 30px;
+	width: 50px;
+	background-color: grey;
+	cursor:pointer;
+}
+
+#deletebutton {
+	height: 30px;
+	width: 50px;
+	background-color: red;
+	cursor:pointer;
+}
 
 </style>
 
+<script type="text/javascript">
+function savepost() {
+	document.edit_post.submit();
+}
+function deletepost() {
+	document.delete_post.submit();
+}
+</script>
+
 <div id="edit_post_form">
+  <div id="edit_wrapper">
     <form name="edit_post" method="post">
-    $:pform.render()
-    <input type="submit"/>
+      $:pform.render()
     </form>
     <form name="delete_post" action="/delete/post/$postnum" method="post">
-        <input type="submit" title="DELETE">
     </form>
+  </div>
+  <div id="control_editor">
+    <div id="savebutton" onclick="savepost();">
+      save
+    </div>
+    $if postnum!='new':
+        <div id="deletebutton" onclick="deletepost();">
+      	delete
+        </div>
+  </div>
 </div>

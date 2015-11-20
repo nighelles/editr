@@ -18,9 +18,6 @@ render = web.template.render('templates/')
 
 db = web.database(dbn='postgres', user='postgres', pw='', db='editr')
 
-session = web.session.Session(None, web.session.DiskStore('sessions'),
-                              initializer={'username' : '','logged_in':False})
-
 postform = form.Form(
     form.Textbox("post_title", form.notnull, description="title"),
     form.Textarea("post_body", form.notnull, description="text")
@@ -191,7 +188,6 @@ class login:
             return "Incorrect Password"
 
     def do_register(self,email,username,passoword):
-
 
         return render.site_header(render.register_landing())
 
