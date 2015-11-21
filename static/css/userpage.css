@@ -33,3 +33,8 @@ div.inc-button {
 	width: 70px;
 	}
 
+div.comment {
+    margin: 5px;
+    background-color: #F8F8F8;
+    border: 1px solid grey;
+}
