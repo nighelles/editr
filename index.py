@@ -14,7 +14,8 @@ urls = (
 '/user/(.+)', 'user',
 '/edit/post/(.+)', 'editpost',
 '/delete/post/(.+)', 'delpost',
-'/edit/inclusion/(.+)', 'editinclusion'
+'/edit/inclusion/(.+)', 'editinclusion',
+'/post/(.+)', 'viewpost'    
 )
 
 render = web.template.render('templates/')
@@ -176,6 +177,42 @@ class user:
                 
         return render.site_header(render.user_page(posts_to_render,[], username, mypage,li), li,uname)
 
+class viewpost:
+    def GET(self, postnum):
+        li = logged_in()
+        mypage=False
+        uname=logged_in_as()
+
+        post = db.select('posts',where="id=$postnum",vars=locals()).first()
+        if post==None:
+            return "Error"
+        else:
+            comments = db.select('comments',where="post=$postnum",vars=locals())
+
+            owner = username_from_userid(post.author_id)
+            
+            return render.site_header(render.post_page(post,comments,uname,owner),li,uname)
+
+    def POST(self, postnum):
+        li = logged_in()
+        mypage=False
+        uname=logged_in_as()
+
+        post = db.select('posts',where="id=$postnum",vars=locals()).first()
+        if post==None:
+            return "Error"
+        else:
+            if li:
+                comment_data=web.input()
+                db.insert('comments',
+                          username=uname,
+                          body=comment_data['comment_body'],
+                          post=postnum)
+                raise web.seeother("/post/"+postnum)
+            else:
+                return "Not logged in"
+        
+    
 class delpost:
     def POST(self, postnum):
         uname = logged_in_as()
