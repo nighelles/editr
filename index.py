@@ -191,7 +191,8 @@ class editpost:
                 db.insert('posts',
                           title=pform.post_title.value,
                           text=pform.post_body.value,
-                          author_id=uid)
+                          author_id=uid,
+                          layout_type=pform.post_layout.value)
             else:
                 db.update('posts',
                           title=pform.post_title.value,

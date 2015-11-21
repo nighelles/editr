@@ -12,12 +12,14 @@ div.post_internal {
 }
 
 div.post0 {
-	float: right;
+    display: inline;
+	float: left;
 	width: 100%;
 }
 
 div.post1 {
-	float: right;
+    display: inline;
+	float: left;
 	width: 50%;
 }
 
