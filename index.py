@@ -60,6 +60,7 @@ def generate_session_key(username):
         session_key=session_key[8:]
         if db.select('sessions',where="session_id="+web.db.sqlquote(session_key)).first()==None:
             break
+    db.delete('sessions',where="username=$username",vars=locals())
     db.insert('sessions',username=username,session_id=session_key)
 
     return session_key
