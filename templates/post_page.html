@@ -1,0 +1,24 @@
+$def with (post,comments,username,pageowner)
+
+<link rel="stylesheet" type="text/css" href="/static/css/userpage.css" />
+
+<div class="post">
+	<div class="post_internal">
+		<span>$post.title</span><br><br>
+		<span>$:post.text</span><br><br>
+		<span><a href="/user/$pageowner" >$pageowner</a></span><br><br>
+		<span>$post.date</span>
+	</div>
+</div>
+$if username!=None:
+    <form method="post">
+	<input type="textarea" name="comment_body"/>
+	<input type="submit" value="Post Comment">
+    </form>
+<div class="comments">
+    $for comment in comments:
+	<div class="comment" >
+		<span class="comment_body">$comment.body</span><br><br>
+		<span class="comment_username">$comment.username</span>
+        </div>
+</div>
