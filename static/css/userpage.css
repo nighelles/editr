@@ -11,6 +11,10 @@ div.post_internal {
     	border:1px solid grey;
 }
 
+div.included_post {
+    background-color: #F9F9F9;
+}
+
 div.post0 {
     display: inline;
 	float: left;
@@ -23,4 +27,9 @@ div.post1 {
 	width: 50%;
 }
 
+div.inc-button {
+	cursor: pointer;
+	background-color:green;
+	width: 70px;
+	}
 

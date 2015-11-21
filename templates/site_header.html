@@ -1,4 +1,4 @@
-$def with (body,logged_in=False)
+$def with (body,logged_in=False,username="")
 
 <html lang="en">
 <head>
@@ -15,6 +15,7 @@ $def with (body,logged_in=False)
     $if logged_in==False:
         <a href="/login/">Login</a>
     $else:
+        <span id="username">$username</span>
         <a href="/logout/">Logout</a>
     </span>
 </div>

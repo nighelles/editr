@@ -109,8 +109,18 @@ def add_from_wordpress(username,uid,url):
 
     db.insert('posts',
               author_id=uid,
-              inclusion_id=i.id
+              inclusion_id=i.id,
+              inclusion_type=2
     )
+
+def add_from_editr(username,uid,postnum):
+    i = db.select('posts',where="id=$postnum",vars=locals()).first()
+    if i==None:
+        return False
+    db.insert('posts',
+              author_id=uid,
+              inclusion_id=postnum,
+              inclusion_type=1)
         
 
 class index:
@@ -118,12 +128,12 @@ class index:
         uname = web.cookies().get('username')
         li = logged_in()
 
-        posts = list(db.select('posts',order="date DESC",limit=20))
+        posts = list(db.select('posts',where="inclusion_type=0",order="date DESC",limit=20))
         #ugly hack, I'll fix tomorrow
         for i in range(0,len(posts)):
             posts[i].author = username_from_userid(posts[i].author_id)
 
-        return render.site_header(render.index_page(posts,uname,li),li)
+        return render.site_header(render.index_page(posts,uname,li),li,uname)
 
 
 class user:
@@ -135,23 +145,36 @@ class user:
                           vars=locals())
 
         li = logged_in()
+        mypage=False
+        uname=logged_in_as()
+        if li and uname==username:
+            mypage=True
 
         posts_to_render = []
         for post in list(posts):
-            if post.inclusion_id == 0:
+            if post.inclusion_type == 0:
                 posts_to_render.append(post)
+            elif post.inclusion_type==1:
+                #This is an included editr post
+                o_post = db.select('posts',where="id=$post.inclusion_id",vars=locals()).first()
+                o_post.layout_type=post.layout_type
+                o_post.id=post.id
+                o_post.author = username_from_userid(o_post.author_id)
+                o_post.edited=post.edited
+                o_post.inclusion_type=1
+                posts_to_render.append(o_post)
             else:
                 o_post = db.select(
                     'inclusions',
                     where="id=$post.inclusion_id",
                     vars=locals()).first()
                 o_post.layout_type=post.layout_type
-                o_post.inclusion_id=-1
                 o_post.id=post.id
+                o_post.inclusion_type=2
                 o_post.edited=post.edited
                 posts_to_render.append(o_post)
                 
-        return render.site_header(render.user_page(posts_to_render,[], username, li), li)
+        return render.site_header(render.user_page(posts_to_render,[], username, mypage,li), li,uname)
 
 class delpost:
     def POST(self, postnum):
@@ -176,7 +199,7 @@ class editpost:
             pform.post_body.value = post.text
 	    pform.post_layout.value = post.layout_type
 
-        return render.site_header(render.edit_post(pform,postnum),logged_in())
+        return render.site_header(render.edit_post(pform,postnum),logged_in(),logged_in_as())
 
     def POST(self, postnum):
         uname = logged_in_as()
@@ -205,7 +228,7 @@ class editpost:
             raise web.seeother('/user/'+uname)
 
         else:
-            return render.site_header(render.edit_post(pform,postnum),logged_in())
+            return render.site_header(render.edit_post(pform,postnum),logged_in(),uname)
 
 class editinclusion:
     def GET(self, postnum):
@@ -214,7 +237,7 @@ class editinclusion:
         if postnum != 'new':
             return "Error"
 
-        return render.site_header(render.edit_inclusion(iform),logged_in())
+        return render.site_header(render.edit_inclusion(iform),logged_in(),logged_in_as())
 
     def POST(self,postnum):
         uname = logged_in_as()
@@ -223,17 +246,21 @@ class editinclusion:
         uid = userid_from_username(uname)
 
         iform = inclusionform()
-        if iform.validates():
-            if postnum=='new':
+        if postnum=='new':
+            if iform.validates():
                 i=web.input()
                 if i['type']=="wordpress":
                     add_from_wordpress(uname,uid,iform.wordpress_url.value)
                     raise web.seeother('/user/'+uname)
                 else:
                     return "Error"
+            else:
+                return render.site_header(render.edit_inclusion(iform),logged_in(),uname)
         else:
-            return render.site_header(render.edit_inclusion(iform),logged_in())
-        
+            #we're including a post from editr
+            add_from_editr(uname,uid,postnum)
+            raise web.seeother("/user/"+uname)
+                
 class logout:
     def GET(self):
         u = web.cookies().get('username')

@@ -12,6 +12,6 @@ $for post in posts:
     <div class="post_internal">
         <span>$post.title</span><br><br>
         <span>$:post.text</span><br><br>
-        <span>$post.author</span><br><span>$post.date</span>
+        <span><a href="/user/$post.author">$post.author</a></span><br><span>$post.date</span>
     </div>
     </div>

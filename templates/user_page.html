@@ -1,25 +1,43 @@
-$def with (posts,included,username,loggedin)
+$def with (posts,included,username,mypage,loggedin)
 
 <link rel="stylesheet" type="text/css" href="/static/css/userpage.css" />
 
+<script>
+function include_post(formid) {
+	f = document.getElementById(formid);
+	f.submit();
+}
+</script>
+
 <div class="posts">
 <div class="post">
-    $if loggedin:
+    $if mypage:
         <a href="/edit/post/new">New Post</a>&nbsp&nbsp&nbsp
         <a href="/edit/inclusion/new?type=wordpress">Add From Wordpress</a>
 </div>
 $for post in posts:
     <div class="post$post.layout_type">
-    <div class="post_internal">
+        $if post.inclusion_type==0:
+	    <div class="post_internal">
+        $else:
+	    <div class="post_internal included_post">	    
         <span>$post.title</span><br><br>
         <span>$:post.text</span><br><br>
-	$if post.inclusion_id==0:
+	$if post.inclusion_type==0:
             <span>$username</span><br>
-        $if post.inclusion_id==-1:
+        $if post.inclusion_type==2:
             <span>Included from: <a href="$post.url">$post.url</a></span>
+	$if post.inclusion_type==1:
+	    <span>Included from: $post.author</span>
         <span>$post.date</span>
-        $if loggedin:
+        $if mypage:
             <a href="/edit/post/$post.id">Edit</a>
+	$if mypage==False and loggedin==True:
+	    <form id="include_post_$post.id" action="/edit/inclusion/$post.id" method="POST">    
+            <div class="inc-button" onclick="include_post('include_post_$post.id')">
+		    Include
+	    </div>
+	    </form>	    
     </div>
     </div>
 </div>
